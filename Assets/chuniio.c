@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <string.h>
 
+
+//currently made for linux, will change once I can dualboot
 int main() {
     const char* name = "/chuniio";
     const size_t SIZE = 1024;
