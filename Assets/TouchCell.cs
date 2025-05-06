@@ -1,16 +1,14 @@
+using System;
 using UnityEngine;
 
-public class TouchCell : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+public class TouchCell : MonoBehaviour {
+  [SerializeField] private int opBtn;
+  private void OnCollisionEnter(Collision other) {
+    
+  }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  [ContextMenu("Test")]
+  public void SendBtn() {
+    ChuniIO.Instance.SendBtnToSharedMemory(opBtn);
+  }
 }
