@@ -176,7 +176,7 @@ MonoBehaviour:
   active: 1
   temperature:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: -0
   tint:
     m_OverrideState: 1
     m_Value: 0
@@ -660,6 +660,9 @@ MonoBehaviour:
   skyOcclusionIntensityMultiplier:
     m_OverrideState: 1
     m_Value: 1
+  worldOffset:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0, z: 0}
 --- !u!114 &3598312518371328039
 MonoBehaviour:
   m_ObjectHideFlags: 3
