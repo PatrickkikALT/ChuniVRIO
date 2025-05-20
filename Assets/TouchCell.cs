@@ -4,11 +4,22 @@ using UnityEngine;
 public class TouchCell : MonoBehaviour {
   [SerializeField] private int opBtn;
   public GameObject player;
+
+  void Start() {
+    player = GameManager.Instance.GetPlayer();
+  }
   private void OnCollisionEnter(Collision other) {
-    if (other.gameObject == player) {
-      Debug.Log("Touch");
-      SendBtn();
+    if (other.gameObject.layer == gameObject.layer) return;
+    Debug.Log("Collision");
+    GetComponent<Renderer>().material.color = Color.red;
+    SendBtn();
+  }
+
+  private void OnCollisionExit(Collision other) {
+    if (other.transform.root.gameObject == player) {
+      GetComponent<Renderer>().material.color = Color.white;
     }
+    
   }
 
   [ContextMenu("Test")]

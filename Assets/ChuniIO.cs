@@ -16,8 +16,7 @@ public class ChuniIO : MonoBehaviour {
   
   [DllImport("libc", SetLastError = true)]
   static extern unsafe int munmap(int* addr, int* length);
-
-
+  
   private int _readWrite = 2;
   private int _protectionWrite = 2;
   private int _mapShared = 1;
@@ -26,10 +25,11 @@ public class ChuniIO : MonoBehaviour {
 
   private void Start() {
     if (Instance == null) Instance = this; else Destroy(this);
+    
+    SendMessageToSharedMemory("Connected to Memory");
   }
-  
-  
-  public unsafe void SendBtnToSharedMemory(int opBtn) {
+
+  public unsafe void SendMessageToSharedMemory(string message) {
     int fd = shm_open(shmemName, _readWrite, 0666);
     if (fd == -1) {
       Debug.LogError("Failed to open."); 
@@ -37,20 +37,39 @@ public class ChuniIO : MonoBehaviour {
     }
     
     int* ptr = mmap(null, size, _protectionWrite, _mapShared, fd, 0);
-    if (ptr == (int*)(-1)) {
+    if (ptr == (int*)-1) {
+      Debug.LogError("Failed to map.");
+    }
+    
+    byte[] bytes = Encoding.ASCII.GetBytes(message + '\0');
+    Marshal.Copy(bytes, 0, (IntPtr)ptr, bytes.Length);
+  }
+  public unsafe void SendBtnToSharedMemory(int btn) {
+    int fd = shm_open(shmemName, _readWrite, 0666);
+    if (fd == -1) {
+      Debug.LogError("Failed to open."); 
+      return;
+    }
+    
+    int* ptr = mmap(null, size, _protectionWrite, _mapShared, fd, 0);
+    if (ptr == (int*)-1) {
       Debug.LogError("Failed to map.");
       return;
     }
 
-    string message = "Pressed button: " + opBtn;
+    string message = "Pressed button: " + btn;
     byte[] bytes = Encoding.ASCII.GetBytes(message + '\0');
     Marshal.Copy(bytes, 0, (IntPtr)ptr, bytes.Length);
 
     Debug.Log("Wrote to shared memory: " + message);
     
-    fixed (int* s = &size)
-    {
+    
+    fixed (int* s = &size) {
       munmap(ptr, s);
     }
+  }
+
+  void OnDestroy() {
+    
   }
 }
