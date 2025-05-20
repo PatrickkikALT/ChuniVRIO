@@ -28,7 +28,7 @@ public class AirSensor : MonoBehaviour {
     }
     else {
       foreach (var sensor in sensors) {
-        if (Physics.Raycast(sensor.position, -sensor.forward, out var hit, 20f)) {
+        if (Physics.Raycast(sensor.position, sensor.forward, out var hit, 20f)) {
           if (hit.transform.gameObject.layer == playerLayer.value) {
             send_air_temp((uint)air, true);
           }
