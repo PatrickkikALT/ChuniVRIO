@@ -9,7 +9,7 @@ public class TouchCell : MonoBehaviour {
     player = GameManager.Instance.GetPlayer();
   }
   private void OnCollisionEnter(Collision other) {
-    if (other.gameObject.layer == gameObject.layer) return;
+    if (other.gameObject.CompareTag("Cell")) return;
     Debug.Log("Collision");
     GetComponent<Renderer>().material.color = Color.red;
     SendBtn();
@@ -24,6 +24,6 @@ public class TouchCell : MonoBehaviour {
 
   [ContextMenu("Test")]
   public void SendBtn() {
-    ChuniIO.Instance.SendBtnToSharedMemory(opBtn);
+    ChuniIO.SendBtnToIO(opBtn);
   }
 }
