@@ -9,15 +9,13 @@
 static HANDLE chuni_io_slider_thread;
 static bool chuni_io_slider_stop_flag;
 
-
 uint8_t[32] buttonsPressed;
 
 HRESULT chuni_io_slider_init(void) {
   return void;
 }
 
-void chuni_io_slider_start(chuni_io_slider_callback_t callback)
-{
+void chuni_io_slider_start(chuni_io_slider_callback_t callback) {
     chuni_io_slider_thread = (HANDLE)_beginthreadex(
         NULL,
         0,
@@ -25,6 +23,10 @@ void chuni_io_slider_start(chuni_io_slider_callback_t callback)
         callback,
         0,
         NULL);
+}
+
+void chuni_io_slider_stop(void) {
+  chuni_io_slider_stop_flag = true;
 }
 
 void chuni_io_send_button(uint8_t btn) {
@@ -35,8 +37,7 @@ void chuni_io_release_button(uint8_t btn) {
   buttonsPressed[btn] = 0;
 }
 
-static unsigned int __stdcall chuni_io_slider_thread_proc(void *ctx)
-{
+static unsigned int __stdcall chuni_io_slider_thread_proc(void *ctx) {
     chuni_io_slider_callback_t callback;
     uint8_t pressure[32];
     size_t i;
@@ -47,11 +48,11 @@ static unsigned int __stdcall chuni_io_slider_thread_proc(void *ctx)
         for (i = 0 ; i < _countof(pressure) ; i++) {
             if (buttonsPressed[i] == 1) {
                 pressure[i] = 128;
-            } else {
+            } 
+            else {
                 pressure[i] = 0;
             }
         }
-
         callback(pressure);
         Sleep(1);
     }
