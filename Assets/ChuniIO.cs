@@ -9,7 +9,7 @@ public class ChuniIO : MonoBehaviour {
   // [SerializeField] private int size = 1024;
 
   [DllImport("chuniio.dll")]
-  private static extern void send_button_temp(uint cell, bool value);
+  private static extern void chuni_io_send_button(uint btn);
 
   [DllImport("chuniio.dll")]
   private static extern void chuni_io_slider_stop(); 
@@ -25,11 +25,11 @@ public class ChuniIO : MonoBehaviour {
   }
 
   public static void SendBtnToIO(int cell) {
-    send_button_temp((uint)cell, true);
+    chuni_io_send_button((uint)cell);
   }
 
   public static void ReleaseBtnFromIO(int cell) {
-    send_button_temp((uint)cell, false);
+    chuni_io_send_button((uint)cell);
   }
 
   public void OnDestroy() {

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 public class TouchCell : MonoBehaviour {
-  [SerializeField] private int opBtn;
+  [SerializeField] private int btn;
   public GameObject player;
 
   void Start() {
@@ -24,6 +24,6 @@ public class TouchCell : MonoBehaviour {
 
   [ContextMenu("Test")]
   public void SendBtn() {
-    ChuniIO.SendBtnToIO(opBtn);
+    ChuniIO.SendBtnToIO(btn);
   }
 }
