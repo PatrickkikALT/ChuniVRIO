@@ -13,6 +13,8 @@ public class AirSensor : MonoBehaviour {
   public int air;
   [DllImport("chuniio.dll")]
   private static extern void send_air_temp(uint index, bool value);
+  //what the actual shit was I on when I wrote this
+  //TODO: fix this asap
   private void FixedUpdate() {
     if (direction == Direction.LEFT) {
       foreach (var sensor in sensors) {

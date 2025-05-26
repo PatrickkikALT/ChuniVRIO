@@ -11,6 +11,10 @@ static bool chuni_io_slider_stop_flag;
 
 uint8_t[32] buttonsPressed;
 
+uint16_t chuni_io_get_api_version(void) {
+  return 0x102
+}
+
 HRESULT chuni_io_slider_init(void) {
   return void;
 }
