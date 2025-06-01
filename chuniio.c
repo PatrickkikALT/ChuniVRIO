@@ -61,7 +61,7 @@ static unsigned __stdcall ShmThreadProc(void* arg) {
         //char debug[128];
         //sprintf_s(debug, sizeof(debug), "Slider[0] = %d\n", g_slider_state[0]);
         //OutputDebugStringA(debug);
-        Sleep(0);
+        Sleep(1);
     }
 
     UnmapViewOfFile(g_shm_ptr);
@@ -79,7 +79,7 @@ static unsigned __stdcall SliderThreadProc(void* arg) {
         if (g_slider_callback) {
             g_slider_callback(g_slider_state);
         }
-        Sleep(0);
+        Sleep(1);
     }
     return 0;
 }
