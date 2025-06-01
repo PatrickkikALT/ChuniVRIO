@@ -18,47 +18,60 @@ static bool g_slider_thread_stop = false;
 static HANDLE g_pipe_thread = NULL;
 static bool g_pipe_thread_stop = false;
 
-#define PIPE_NAME "\\\\.\\pipe\\ChuniIIPipe"
+#define SHM_NAME "ChuniIOSharedMemory"
 
-SECURITY_ATTRIBUTES sa = { sizeof(sa), NULL, TRUE };
-static unsigned __stdcall PipeThreadProc(void* arg) {
-    while (!g_pipe_thread_stop) {
-        HANDLE hPipe = CreateNamedPipeA(
-            PIPE_NAME,
-            PIPE_ACCESS_INBOUND,
-            PIPE_TYPE_BYTE | PIPE_WAIT,
-            1,
-            0, 0, 0, &sa);
+static HANDLE g_shm_handle = NULL;
+static uint8_t* g_shm_ptr = NULL;
 
-        if (hPipe == INVALID_HANDLE_VALUE) {
-            Sleep(100);
-            continue;
-        }
 
-        BOOL connected = ConnectNamedPipe(hPipe, NULL) ? TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
-        if (!connected) {
-            CloseHandle(hPipe);
-            Sleep(100);
-            continue;
-        }
+static unsigned __stdcall ShmThreadProc(void* arg) {
+    g_shm_handle = CreateFileMappingA(
+        INVALID_HANDLE_VALUE,
+        NULL,
+        PAGE_READWRITE,
+        0,
+        34,
+        SHM_NAME);
 
-        uint8_t buffer[34];
-        DWORD bytesRead = 0;
-
-        while (!g_pipe_thread_stop && ReadFile(hPipe, buffer, sizeof(buffer), &bytesRead, NULL)) {
-            if (bytesRead == 34) {
-                g_opbtn_state = buffer[0];
-                g_beam_state = buffer[1];
-                memcpy(g_slider_state, &buffer[2], 32);
-            }
-        }
-
-        DisconnectNamedPipe(hPipe);
-        CloseHandle(hPipe);
+    if (g_shm_handle == NULL) {
+        DWORD error = GetLastError();
+        char buffer[256];
+        sprintf_s(buffer, sizeof(buffer), "Shared Memory Creation Failed: %lu\n", error);
+        OutputDebugStringA(buffer);
+        return 1;
     }
+
+    g_shm_ptr = (uint8_t*)MapViewOfFile(g_shm_handle, FILE_MAP_READ, 0, 0, 34);
+    if (g_shm_ptr == NULL) {
+        DWORD error = GetLastError();
+        char buffer[256];
+        sprintf_s(buffer, sizeof(buffer), "MapViewOfFile Failed: %lu\n", error);
+        OutputDebugStringA(buffer);
+        CloseHandle(g_shm_handle);
+        g_shm_handle = NULL;
+        return 1;
+    }
+
+    OutputDebugStringA("Shared Memory Mapped Successfully.\n");
+
+    while (!g_pipe_thread_stop) {
+        g_opbtn_state = g_shm_ptr[0];
+        g_beam_state = g_shm_ptr[1];
+        memcpy(g_slider_state, &g_shm_ptr[2], 32);
+        //char debug[128];
+        //sprintf_s(debug, sizeof(debug), "Slider[0] = %d\n", g_slider_state[0]);
+        //OutputDebugStringA(debug);
+        Sleep(0);
+    }
+
+    UnmapViewOfFile(g_shm_ptr);
+    CloseHandle(g_shm_handle);
+    g_shm_ptr = NULL;
+    g_shm_handle = NULL;
 
     return 0;
 }
+
 
 
 static unsigned __stdcall SliderThreadProc(void* arg) {
@@ -66,7 +79,7 @@ static unsigned __stdcall SliderThreadProc(void* arg) {
         if (g_slider_callback) {
             g_slider_callback(g_slider_state);
         }
-        Sleep(1);
+        Sleep(0);
     }
     return 0;
 }
@@ -91,9 +104,10 @@ void chuni_io_jvs_read_coin_counter(uint16_t* total) {
 
 HRESULT chuni_io_slider_init(void) {
     g_pipe_thread_stop = false;
-    g_pipe_thread = (HANDLE)_beginthreadex(NULL, 0, PipeThreadProc, NULL, 0, NULL);
+    g_pipe_thread = (HANDLE)_beginthreadex(NULL, 0, ShmThreadProc, NULL, 0, NULL);
     return S_OK;
 }
+
 
 void chuni_io_slider_start(chuni_io_slider_callback_t cb) {
     g_slider_callback = cb;
@@ -111,15 +125,28 @@ void chuni_io_slider_stop(void) {
 
     g_pipe_thread_stop = true;
     if (g_pipe_thread) {
-        HANDLE hPipe = CreateFileA(PIPE_NAME, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-        if (hPipe != INVALID_HANDLE_VALUE) {
-            CloseHandle(hPipe);
-        }
         WaitForSingleObject(g_pipe_thread, INFINITE);
         CloseHandle(g_pipe_thread);
         g_pipe_thread = NULL;
     }
+
+
+    g_slider_thread_stop = false;
+    g_pipe_thread_stop = false;
+
+    g_pipe_thread = (HANDLE)_beginthreadex(NULL, 0, ShmThreadProc, NULL, 0, NULL);
+    if (!g_pipe_thread) {
+        OutputDebugStringA("Failed to restart pipe thread in chuni_io_slider_stop\n");
+    }
+
+    if (g_slider_callback) {
+        g_slider_thread = (HANDLE)_beginthreadex(NULL, 0, SliderThreadProc, NULL, 0, NULL);
+        if (!g_slider_thread) {
+            OutputDebugStringA("Failed to restart slider thread in chuni_io_slider_stop\n");
+        }
+    }
 }
+
 void chuni_io_slider_set_leds(const uint8_t* rgb) {
     //TODO
     return;
