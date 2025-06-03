@@ -18,9 +18,24 @@
     <ClCompile Include="..\chuniio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\ledoutput.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pipeimpl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\chuniio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\leddata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ledoutput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pipeimpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

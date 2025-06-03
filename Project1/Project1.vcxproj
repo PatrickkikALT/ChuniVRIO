@@ -128,9 +128,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\chuniio.c" />
+    <ClCompile Include="..\ledoutput.c" />
+    <ClCompile Include="..\pipeimpl.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\chuniio.h" />
+    <ClInclude Include="..\leddata.h" />
+    <ClInclude Include="..\ledoutput.h" />
+    <ClInclude Include="..\pipeimpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

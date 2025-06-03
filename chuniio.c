@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "chuniio.h"
+#include "ledoutput.h"
 
 static uint8_t g_opbtn_state = 0;
 static uint8_t g_beam_state = 0;
@@ -36,7 +37,7 @@ static unsigned __stdcall ShmThreadProc(void* arg) {
     if (g_shm_handle == NULL) {
         DWORD error = GetLastError();
         char buffer[256];
-        sprintf_s(buffer, sizeof(buffer), "Shared Memory Creation Failed: %lu\n", error);
+        sprintf_s(buffer, sizeof(buffer), "ChuniVR: Shared Memory Creation Failed: %lu\n", error);
         OutputDebugStringA(buffer);
         return 1;
     }
@@ -45,14 +46,14 @@ static unsigned __stdcall ShmThreadProc(void* arg) {
     if (g_shm_ptr == NULL) {
         DWORD error = GetLastError();
         char buffer[256];
-        sprintf_s(buffer, sizeof(buffer), "MapViewOfFile Failed: %lu\n", error);
+        sprintf_s(buffer, sizeof(buffer), "ChuniVR: MapViewOfFile Failed: %lu\n", error);
         OutputDebugStringA(buffer);
         CloseHandle(g_shm_handle);
         g_shm_handle = NULL;
         return 1;
     }
 
-    OutputDebugStringA("Shared Memory Mapped Successfully.\n");
+    OutputDebugStringA("ChuniVR: Shared Memory Mapped Successfully.\n");
 
     while (!g_pipe_thread_stop) {
         g_opbtn_state = g_shm_ptr[0];
@@ -90,6 +91,16 @@ uint16_t chuni_io_get_api_version(void) {
 }
 
 HRESULT chuni_io_jvs_init(void) {
+    led_init_mutex = CreateMutex(
+        NULL,
+        FALSE,
+        NULL);
+
+    if (led_init_mutex == NULL)
+    {
+        return E_FAIL;
+    }
+
     return S_OK;
 }
 
@@ -148,16 +159,14 @@ void chuni_io_slider_stop(void) {
 }
 
 void chuni_io_slider_set_leds(const uint8_t* rgb) {
-    //TODO
-    return;
+    led_output_update(2, rgb);
 }
 
 HRESULT chuni_io_led_init(void) {
-    return S_OK;
+	return led_output_init();
 }
 
 void chuni_io_led_set_colors(uint8_t board, uint8_t* rgb) {
-    //TODO
-    return;
+    led_output_update(board, rgb);
 }
 
