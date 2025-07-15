@@ -1,5 +1,6 @@
 # ChuniIO
-Allows connection to Chunithm via Shared Memory.
+Allows connection to Chunithm via Shared Memory. <br>
+Originally built for the [ChuniVR](https://github.com/PatrickkikALT/ChuniVR) project, but should be able to be implemented quite easily for other projects. <br>
 
 To use simply drop into the Chunithm folder then open segatools.ini and change this line: <br>
 `[chuniio]` <br>
