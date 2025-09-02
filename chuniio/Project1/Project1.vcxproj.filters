@@ -15,28 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\chuniio.c">
+    <ClCompile Include="chuniio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\ledoutput.c">
+    <ClCompile Include="ledoutput.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\pipeimpl.c">
+    <ClCompile Include="pipeimpl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\chuniio.h">
+    <ClInclude Include="chuniio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\leddata.h">
+    <ClInclude Include="leddata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\ledoutput.h">
+    <ClInclude Include="ledoutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\pipeimpl.h">
+    <ClInclude Include="pipeimpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="chuniio.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

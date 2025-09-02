@@ -24,7 +24,7 @@ static bool g_shm_thread_stop = false;
 static HANDLE g_shm_handle = NULL;
 static uint8_t* g_shm_ptr = NULL;
 
-
+static uint16_t g_coin_count;
 // reads shared memory and updates input states every frame
 static unsigned __stdcall ShmThreadProc(void* arg) {
     //open up a named shared memory link
@@ -53,7 +53,12 @@ static unsigned __stdcall ShmThreadProc(void* arg) {
     //every frame copy input from shared memory into their corresponding pointers
     //even if no input is there we should still send it through or chunithm thinks its dead
     while (!g_shm_thread_stop) {
-        g_opbtn_state = g_shm_ptr[0];
+        if (g_shm_ptr[0] == 0x03) {
+          g_coin_count++;
+        }
+        else {
+          g_opbtn_state = g_shm_ptr[0];
+        }
         g_beam_state = g_shm_ptr[1];
         memcpy(g_slider_state, &g_shm_ptr[2], 32); // 2 bytes offset: first 2 are opbtn and beam
         Sleep(1); // 1ms = 1khz input
@@ -104,7 +109,10 @@ void chuni_io_jvs_poll(uint8_t* opbtn, uint8_t* beams) {
 }
 
 void chuni_io_jvs_read_coin_counter(uint16_t* total) {
-    if (total) *total = 0;
+  if (!total) {
+    return;
+  }
+  *total = g_coin_count;
 }
 
 HRESULT chuni_io_slider_init(void) {

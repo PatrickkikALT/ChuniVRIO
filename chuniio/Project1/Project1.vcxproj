@@ -83,7 +83,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>$(SolutionDir)chuniio.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(ProjectDir)chuniio.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,15 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\chuniio.c" />
-    <ClCompile Include="..\ledoutput.c" />
-    <ClCompile Include="..\pipeimpl.c" />
+    <ClInclude Include="chuniio.h" />
+    <ClInclude Include="leddata.h" />
+    <ClInclude Include="ledoutput.h" />
+    <ClInclude Include="pipeimpl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\chuniio.h" />
-    <ClInclude Include="..\leddata.h" />
-    <ClInclude Include="..\ledoutput.h" />
-    <ClInclude Include="..\pipeimpl.h" />
+    <ClCompile Include="chuniio.c" />
+    <ClCompile Include="ledoutput.c" />
+    <ClCompile Include="pipeimpl.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="chuniio.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
