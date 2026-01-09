@@ -11,6 +11,7 @@ To use simply drop into the Chunithm folder then open segatools.ini and change t
 ## Development
 This IO opens up the input through a Shared Memory link. <br>
 Simply write a 34 size byte array to "ChuniIOSharedMemory" where the byte[0] is an operator button, byte[1] beams broken, and byte[2 to 34] the pressure value per cell. <br>
+For an example implementation, see [ChuniVR](https://github.com/PatrickkikALT/ChuniVR) <br>
 
 | Operator Button  | Byte          |
 | -------------    | ------------- |
